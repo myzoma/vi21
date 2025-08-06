@@ -4,7 +4,7 @@ import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 export default defineConfig({
-  base: '/vi21/', // اسم المشروع على GitHub Pages
+  base: '/vi21/',
 
   plugins: [
     react(),
@@ -41,3 +41,4 @@ export default defineConfig({
     },
   },
 });
+
