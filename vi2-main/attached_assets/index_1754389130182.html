@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محلل موجات إليوت - Elliott Wave Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <h1>محلل موجات إليوت</h1>
+                </div>
+                <div class="status-indicator">
+                    <i class="fas fa-circle" id="status-icon"></i>
+                    <span id="status-text">جاري التحليل...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Interactive Features Row -->
+            <div class="interactive-features">
+                <!-- Watchlist Card -->
+                <section class="card feature-card watchlist-card">
+                    <div class="card-header">
+                        <i class="fas fa-star"></i>
+                        <h3>قائمة المراقبة</h3>
+                        <div class="feature-btn" onclick="toggleWatchlist()">
+                            <i class="fas fa-plus" id="watchlist-icon"></i>
+                        </div>
+                    </div>
+                    <div class="card-content" id="watchlist-content">
+                        <div class="empty-state">
+                            <i class="fas fa-star-half-alt"></i>
+                            <p>أضف العملات المفضلة لديك</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- REMOVED: Fake Market Sentiment - Will be replaced with real data -->
+
+                <!-- Price Alerts Card -->
+                <section class="card feature-card alerts-card">
+                    <div class="card-header">
+                        <i class="fas fa-bell"></i>
+                        <h3>تنبيهات الأسعار</h3>
+                        <div class="feature-btn" onclick="toggleAlerts()">
+                            <i class="fas fa-plus" id="alerts-icon"></i>
+                        </div>
+                    </div>
+                    <div class="card-content" id="alerts-content">
+                        <div class="empty-state">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>لا توجد تنبيهات نشطة</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Market Data Section -->
+            <section class="card market-data-card">
+                <div class="card-header">
+                    <i class="fas fa-chart-candlestick"></i>
+                    <h2>بيانات السوق</h2>
+                    <div class="header-controls">
+                        <div class="symbol-selector">
+                            <input type="text" id="symbol-input" placeholder="أدخل رمز العملة (مثل: BTCUSDT)" 
+                                   value="BTCUSDT" onkeyup="handleSymbolInput(event)" 
+                                   autocomplete="off" list="symbol-suggestions">
+                            <datalist id="symbol-suggestions"></datalist>
+                            <div class="symbol-suggestions-dropdown" id="suggestions-dropdown"></div>
+                        </div>
+                        <div class="interval-selector">
+                            <select id="interval-select" onchange="changeInterval()">
+                                <optgroup label="أطر زمنية عالية الدقة (موصى بها)">
+                                    <option value="4h" selected>4 ساعات ⭐</option>
+                                    <option value="6h">6 ساعات ⭐</option>
+                                    <option value="8h">8 ساعات ⭐⭐</option>
+                                    <option value="12h">12 ساعة ⭐⭐</option>
+                                    <option value="1d">1 يوم ⭐⭐</option>
+                                    <option value="3d">3 أيام ⭐⭐</option>
+                                    <option value="1w">1 أسبوع ⭐⭐⭐</option>
+                                    <option value="1M">1 شهر ⭐⭐⭐</option>
+                                </optgroup>
+                                <optgroup label="أطر زمنية متوسطة الدقة">
+                                    <option value="1h">1 ساعة</option>
+                                    <option value="2h">2 ساعة</option>
+                                    <option value="30m">30 دقيقة</option>
+                                </optgroup>
+                                <optgroup label="أطر زمنية قصيرة (دقة أقل)">
+                                    <option value="15m">15 دقيقة</option>
+                                    <option value="5m">5 دقائق</option>
+                                    <option value="1m">1 دقيقة</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="refresh-btn" onclick="runAnalysis()">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="feature-btn" onclick="addToWatchlist(currentSymbol)" title="إضافة للمراقبة">
+                            <i class="fas fa-star" id="add-watchlist-btn"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content" id="market-data">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>جاري تحميل البيانات...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analysis Results Section -->
+            <section class="card analysis-card">
+                <div class="card-header">
+                    <i class="fas fa-brain"></i>
+                    <h2>نتائج التحليل الفني</h2>
+                </div>
+                <div class="card-content" id="analysis-results">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>جاري التحليل...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recommendations Section -->
+            <section class="card recommendations-card">
+                <div class="card-header">
+                    <i class="fas fa-lightbulb"></i>
+                    <h2>التوصيات والإشارات</h2>
+                </div>
+                <div class="card-content" id="recommendations">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>جاري إنشاء التوصيات...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Real Technical Indicators Section -->
+            <section class="card technical-indicators-card">
+                <div class="card-header">
+                    <i class="fas fa-chart-area"></i>
+                    <h2>المؤشرات التقنية الحقيقية</h2>
+                    <div class="header-controls">
+                        <div class="authenticity-badge-small">
+                            📊 بيانات حقيقية 100%
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content" id="technical-indicators">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>جاري حساب المؤشرات التقنية...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trading Signals Section -->
+            <section class="card trading-signals-card">
+                <div class="card-header">
+                    <i class="fas fa-signal"></i>
+                    <h2>الإشارات التجارية</h2>
+                    <div class="header-controls">
+                        <div class="authenticity-badge-small">
+                            🎯 تحليل حقيقي
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content" id="trading-signals">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>جاري تحليل الإشارات...</span>
+                    </div>
+                </div>
+            </section>
+
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p><i class="fas fa-info-circle"></i> محلل موجات إليوت المتقدم - تحليل فني دقيق للأسواق المالية</p>
+                <div class="last-update">
+                    <i class="fas fa-clock"></i>
+                    <span id="last-update">آخر تحديث: --</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة تنبيه سعر</h3>
+                <span class="close" onclick="closeAlertModal()">&times;</span>
+            </div>
+            <form id="alertForm">
+                <div class="form-group">
+                    <label for="alertSymbol">العملة:</label>
+                    <input type="text" id="alertSymbol" placeholder="مثل: BTCUSDT" required>
+                </div>
+                <div class="form-group">
+                    <label for="alertCondition">النوع:</label>
+                    <select id="alertCondition" required>
+                        <option value="above">أعلى من</option>
+                        <option value="below">أقل من</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="alertPrice">السعر المستهدف:</label>
+                    <input type="number" id="alertPrice" step="0.0001" placeholder="0.0000" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAlertModal()">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">إضافة تنبيه</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="elliottWaveAnalyzer.js"></script>
+    <script src="realTechnicalIndicators.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
