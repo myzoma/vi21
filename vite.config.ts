@@ -30,7 +30,7 @@ export default defineConfig({
   root: path.resolve(import.meta.dirname, "client"),
 
   build: {
-    outDir: path.resolve(import.meta.dirname, "docs"), // GitHub Pages يقرأ من هنا
+    outDir: path.resolve(import.meta.dirname, "dist"), // غيّر من docs إلى dist
     emptyOutDir: true,
   },
 
